@@ -1,8 +1,31 @@
 [gd_scene format=3 uid="uid://ccn6ho52sjv61"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4xowi"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_a202f"]
+sky_material = SubResource("ProceduralSkyMaterial_4xowi")
+
+[sub_resource type="Environment" id="Environment_noarx"]
+background_mode = 2
+sky = SubResource("Sky_a202f")
+tonemap_mode = 2
+glow_enabled = true
+
 [node name="Main" type="Node3D" unique_id=816037966]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1282449134]
+environment = SubResource("Environment_noarx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=852923812]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
 
 [node name="Floor" type="CSGBox3D" parent="." unique_id=2132296241]
 transform = Transform3D(3.4800003, 0, 0, 0, 1, 0, 0, 0, 5.6160007, 0.4720459, -0.0798828, 0.8023071)
 use_collision = true
 size = Vector3(4.442, 0.4, 2.605)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1023075194]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0.5, 6.1000004, 11.912436)
