@@ -9,8 +9,8 @@ extends CharacterBody3D
 @export var can_move : bool = true
 ## Are we affected by gravity?
 @export var has_gravity : bool = true
-## Can we press to jump?
-@export var can_jump : bool = true
+## Can we press to crouch?
+@export var can_crouch : bool = true
 ## Can we hold to run?
 @export var can_sprint : bool = false
 ## Can we press to enter freefly mode (noclip)?
@@ -21,8 +21,8 @@ extends CharacterBody3D
 @export var look_speed : float = 0.002
 ## Normal speed.
 @export var base_speed : float = 7.0
-## Speed of jump.
-@export var jump_velocity : float = 4.5
+## Normal speed when crouch
+@export var crouch_speed : float = 3.5
 ## How fast do we run?
 @export var sprint_speed : float = 10.0
 ## How fast do we freefly?
@@ -39,8 +39,8 @@ extends CharacterBody3D
 @export var input_forward : String = "ui_up"
 ## Name of Input Action to move Backward.
 @export var input_back : String = "ui_down"
-## Name of Input Action to Jump.
-@export var input_jump : String = "ui_accept"
+## Name of Input Action to Crouch.
+@export var input_crouch : String = "crouch"
 ## Name of Input Action to Sprint.
 @export var input_sprint : String = "sprint"
 ## Name of Input Action to toggle freefly mode.
@@ -59,6 +59,7 @@ var freeflying : bool = false
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
+@onready var mesh: MeshInstance3D = $Mesh
 
 func _ready() -> void:
 	check_input_mappings()
@@ -102,10 +103,16 @@ func _physics_process(delta: float) -> void:
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 
-	# Apply jumping
-	if can_jump:
-		if Input.is_action_just_pressed(input_jump) and is_on_floor():
-			velocity.y = jump_velocity
+	# Apply crouch
+	if can_crouch:
+		if Input.is_action_pressed("crouch"):
+			#collider.shape.set_height(0.6)
+			$Head.position = Vector3 (0, 0.6, 0)
+			base_speed = crouch_speed
+		else:
+			$Collider.shape.height = 1.7
+			$Head.position = Vector3 (0,1.7,0)
+			base_speed = base_speed
 
 	# Modify speed based on sprinting
 	if can_sprint and Input.is_action_pressed(input_sprint):
@@ -179,9 +186,9 @@ func check_input_mappings():
 	if can_move and not InputMap.has_action(input_back):
 		push_error("Movement disabled. No InputAction found for input_back: " + input_back)
 		can_move = false
-	if can_jump and not InputMap.has_action(input_jump):
-		push_error("Jumping disabled. No InputAction found for input_jump: " + input_jump)
-		can_jump = false
+	if can_crouch and not InputMap.has_action(input_crouch):
+		push_error("Crouch disabled. No InputAction found for input_crouch: " + input_crouch)
+		can_crouch = false
 	if can_sprint and not InputMap.has_action(input_sprint):
 		push_error("Sprinting disabled. No InputAction found for input_sprint: " + input_sprint)
 		can_sprint = false
